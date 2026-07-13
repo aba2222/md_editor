@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import markdownit from 'markdown-it'
 
 import 'highlight.js/styles/github.css'
@@ -12,15 +12,20 @@ const theme = ref(
   String(document.documentElement.getAttribute('data-bs-theme') || 'light').toLowerCase(),
 )
 const isDark = computed(() => theme.value === 'dark' || theme.value === 'black')
+let observer: MutationObserver | null = null
 
 onMounted(() => {
-  const observer = new MutationObserver(() => {
+  observer = new MutationObserver(() => {
     theme.value = (document.documentElement.getAttribute('data-bs-theme') || 'light').toLowerCase()
   })
 
   observer.observe(document.documentElement, {
     attributeFilter: ['data-bs-theme'],
   })
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
 })
 
 const md = markdownit({
@@ -72,13 +77,23 @@ function insertMarkdown(before: string, after: string = '') {
 <template>
   <div class="editor" :class="{ dark: isDark }">
     <div class="toolbar">
-      <button type="button" @click="insertMarkdown('**', '**')">B</button>
-      <button type="button" @click="insertMarkdown('*', '*')">I</button>
-      <button type="button" @click="insertMarkdown('~~', '~~')">-</button>
-      <button type="button" @click="insertMarkdown('> ')">“</button>
-      <button type="button" @click="insertMarkdown('`', '`')"><></button>
-      <button type="button" @click="insertMarkdown('[', '名称](链接)')">🔗</button>
-      <button type="button" @click="insertMarkdown('# ')">H1</button>
+      <button type="button" @click="insertMarkdown('**', '**')">
+        <i class="bi bi-type-bold"></i>
+      </button>
+      <button type="button" @click="insertMarkdown('*', '*')">
+        <i class="bi bi-type-italic"></i>
+      </button>
+      <button type="button" @click="insertMarkdown('~~', '~~')">
+        <i class="bi bi-type-strikethrough"></i>
+      </button>
+      <button type="button" @click="insertMarkdown('> ')"><i class="bi bi-quote"></i></button>
+      <button type="button" @click="insertMarkdown('`', '`')">
+        <i class="bi bi-code-slash"></i>
+      </button>
+      <button type="button" @click="insertMarkdown('[', '名称](链接)')">
+        <i class="bi bi-link-45deg"></i>
+      </button>
+      <button type="button" @click="insertMarkdown('# ')"><i class="bi bi-type-h1"></i></button>
     </div>
     <div class="main_editor">
       <textarea
@@ -123,21 +138,25 @@ function insertMarkdown(before: string, after: string = '') {
 }
 
 .toolbar button {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 18px;
   color: #222;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   background: transparent;
   cursor: pointer;
   transition:
     background 0.12s ease,
     transform 0.08s ease;
+}
+
+.toolbar button i {
+  font-size: 18px;
 }
 
 .toolbar button:hover {
