@@ -297,7 +297,7 @@ function insertMarkdown(before: string, after: string = '') {
 
 .editor.dark .input,
 .editor.dark .preview {
-  background: #0b1220;
+  background: #16181b;
   color: #e2e8f0;
 }
 
@@ -310,7 +310,7 @@ function insertMarkdown(before: string, after: string = '') {
 }
 
 .editor.dark .preview pre {
-  background: #111822;
+  background: #1f2124;
 }
 
 .editor.dark .preview code {
