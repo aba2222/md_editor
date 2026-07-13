@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
 import MarkdownEditor from './components/MarkdownEditor.vue'
 
-createApp(MarkdownEditor).mount('#md_editor')
+document.querySelectorAll('.md_editor').forEach((el) => {
+  createApp(MarkdownEditor).mount(el)
+})
