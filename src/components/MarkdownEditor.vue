@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import markdownit from 'markdown-it'
 
 import 'highlight.js/styles/github.css'
 import hljs from 'highlight.js/lib/common'
 
 const md = markdownit({
+  linkify: true,
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -39,15 +40,20 @@ watch(
 
 function insertMarkdown(before: string, after: string = '') {
   const el = textarea.value
+  if (!el) return
 
-  if (el) {
-    let start = el.selectionStart
-    let end = el.selectionEnd
-    let selected = markdown.value.substring(start, end)
+  let start = el.selectionStart
+  let end = el.selectionEnd
+  let selected = markdown.value.substring(start, end)
 
-    markdown.value =
-      markdown.value.substring(0, start) + before + selected + after + markdown.value.substring(end)
-  }
+  markdown.value =
+    markdown.value.substring(0, start) + before + selected + after + markdown.value.substring(end)
+
+  nextTick(() => {
+    el.focus()
+    el.selectionStart = start + before.length
+    el.selectionEnd = end + before.length
+  })
 }
 </script>
 
