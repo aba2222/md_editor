@@ -5,6 +5,10 @@ import markdownit from 'markdown-it'
 import 'highlight.js/styles/github.css'
 import hljs from 'highlight.js/lib/common'
 
+const props = defineProps<{ name?: string; value?: string }>()
+const name = props.name || 'content'
+const value = props.value || ''
+
 const md = markdownit({
   linkify: true,
   highlight: function (str, lang) {
@@ -19,18 +23,12 @@ const md = markdownit({
 })
 
 const textarea = ref<HTMLTextAreaElement | null>(null)
-const markdown = ref('')
+const markdown = ref(value)
 const html = ref('')
 
 watch(
   markdown,
   (value) => {
-    const content = document.getElementById('content') as HTMLTextAreaElement | null
-
-    if (content) {
-      content.value = value
-    }
-
     html.value = md.render(value)
   },
   {
@@ -74,6 +72,7 @@ function insertMarkdown(before: string, after: string = '') {
         v-model="markdown"
         class="input"
         placeholder="Write markdown..."
+        :name="name"
       ></textarea>
       <div class="preview" v-html="html"></div>
     </div>
