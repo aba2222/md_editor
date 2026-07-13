@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import markdownit from 'markdown-it'
 
 import 'highlight.js/styles/github.css'
 import hljs from 'highlight.js/lib/common'
 
-const props = defineProps<{ name?: string; value?: string; theme?: string }>()
+const props = defineProps<{ name?: string; value?: string }>()
 const name = props.name || 'content'
 const value = props.value || ''
-const theme = String(props.theme || 'light').toLowerCase()
-const isDark = theme === 'dark' || theme === 'black'
+const theme = ref(
+  String(document.documentElement.getAttribute('data-bs-theme') || 'light').toLowerCase(),
+)
+const isDark = computed(() => theme.value === 'dark' || theme.value === 'black')
+
+onMounted(() => {
+  const observer = new MutationObserver(() => {
+    theme.value = (document.documentElement.getAttribute('data-bs-theme') || 'light').toLowerCase()
+  })
+
+  observer.observe(document.documentElement, {
+    attributeFilter: ['data-bs-theme'],
+  })
+})
 
 const md = markdownit({
   linkify: true,
@@ -217,7 +229,7 @@ function insertMarkdown(before: string, after: string = '') {
 }
 
 .editor.dark .preview code {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* custom scrollbar */
