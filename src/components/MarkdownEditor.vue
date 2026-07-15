@@ -311,6 +311,7 @@ function insertMarkdown(before: string, after: string = '') {
   display: flex;
   gap: 0;
   align-items: stretch;
+  min-width: 0;
 }
 
 .input,
@@ -347,6 +348,9 @@ function insertMarkdown(before: string, after: string = '') {
 .preview {
   background: #ffffff;
   color: #0f172a;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
 }
 
 .editor.dark {
